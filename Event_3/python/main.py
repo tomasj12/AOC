@@ -7,5 +7,5 @@ PATH_DATA = PATH_REPO / 'Event_3' / 'Data' /'data.txt'
 if __name__ == '__main__':
 
     init = EventThree(PATH_DATA)
-    most_common,least_common = init.handle_input()
+    most_common,least_common = init.handle_input(decrease=True)
     print(int(most_common,base=2) * int(least_common, base=2))

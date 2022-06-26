@@ -39,10 +39,44 @@ class EventThree(InputHandler):
             
             self.input_dict[f'col_{j}'] = ''.join(self.input_dict[f'col_{j}'])
      
-    def handle_input(self) -> t.Tuple[t.List[int],t.List[int]]:
+    def handle_input_dict(self, data):
+        d = {f'col_{i}':[] for i in range(self.length_row)}
+        for j in range(self.length_row):
+            for i in range(len(data)):
+                d[f'col_{j}'].append(data[i][j])
+            
+            d[f'col_{j}'] = ''.join(d[f'col_{j}'])
+        
+        return d
+      
+    def handle_input(self, decrease: bool=False) -> t.Tuple[str,str]:
 
-        most_common = [Counter(self.input_dict[f'col_{j}']).most_common(1)[0][0] for j in range(self.length_row)]
-        least_common = [Counter(self.input_dict[f'col_{j}']).most_common(self.length_row + 1)[-1][0] for j in range(self.length_row)]
+        if decrease:
+            most_common = self.input.copy()
+            least_common = self.input.copy()
+            most_common_dict = self.input_dict.copy()
+            least_common_dict = self.input_dict.copy()
+            for j in range(self.length_row):
+                ct_most = Counter(most_common_dict[f'col_{j}']).most_common(2)
+                most_ = ct_most[0][0] if ct_most[0][1] != ct_most[1][1] else '1'
+                most_common = [line for line in most_common if line[j:].startswith(most_)]
+                most_common_dict = self.handle_input_dict(most_common)
+
+                if len(most_common) == 1:
+                    break
+                
+            for j in range(self.length_row):
+                ct_least = Counter(least_common_dict[f'col_{j}']).most_common(2)
+                least_ = ct_least[-1][0] if ct_least[0][1] != ct_least[1][1] else '0'
+                least_common = [line for line in least_common if line[j:].startswith(least_)]
+                least_common_dict = self.handle_input_dict(least_common)
+
+                if len(least_common) == 1:
+                    break
+
+        else:
+            most_common = [Counter(self.input_dict[f'col_{j}']).most_common(1)[0][0] for j in range(self.length_row)]
+            least_common = [Counter(self.input_dict[f'col_{j}']).most_common(self.length_row + 1)[-1][0] for j in range(self.length_row)]
 
         return ''.join(most_common),''.join(least_common)
         
